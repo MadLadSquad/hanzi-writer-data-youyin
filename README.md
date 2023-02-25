@@ -42,7 +42,7 @@ function createHanziWriter()
         showOutline: true,
         strokeAnimationSpeed: 1.25,
         delayBetweenStrokes: 50,
-		    charDataLoader: charDataLoader,
+        charDataLoader: charDataLoader,
     });
 
     target.addEventListener('mouseover', function() 
