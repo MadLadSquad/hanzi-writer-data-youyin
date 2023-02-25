@@ -49,6 +49,7 @@ function createHanziWriter()
     {
         writer.animateCharacter();
     });
+}
 ```
 if you want to have support for the Hanzi database or the Hanzi and JP databases simply change the character loader function to 
 this
