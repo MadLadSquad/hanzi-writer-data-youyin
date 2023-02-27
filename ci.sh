@@ -41,7 +41,7 @@ init()
 	merge_data data-hz-t/ 0
 	merge_data data-kana/ 0
 
-	cd ../hanzi-writer-data-hz/ || exit
+	cd ../hanzi-writer-data-zh/ || exit
 	cp data/*.json ../../data/ || exit
 }
 
