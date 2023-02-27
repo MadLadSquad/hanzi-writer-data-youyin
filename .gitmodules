@@ -1,0 +1,6 @@
+[submodule "ThirdParty/hanzi-writer-data-zh"]
+	path = ThirdParty/hanzi-writer-data-zh
+	url = https://github.com/chanind/hanzi-writer-data
+[submodule "ThirdParty/hanzi-writer-data-jp"]
+	path = ThirdParty/hanzi-writer-data-jp
+	url = https://github.com/chanind/hanzi-writer-data-jp

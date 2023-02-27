@@ -1,0 +1,51 @@
+diff --git a/stroke_data_parser.py b/stroke_data_parser.py
+index c168849..76d20cd 100644
+--- a/stroke_data_parser.py
++++ b/stroke_data_parser.py
+@@ -1,11 +1,12 @@
+ import json
+ import os
++import sys
+ from copy import copy
+ 
+ root = os.path.dirname(__file__)
+-dictionary_file = os.path.join(root, 'vendor/animCJK/dictionaryJa.txt')
+-graphics_file = os.path.join(root, 'vendor/animCJK/graphicsJa.txt')
+-output_dir = os.path.join(root, 'data')
++dictionary_file = os.path.join(root, f'vendor/animCJK/dictionary{sys.argv[1]}.txt')
++graphics_file = os.path.join(root, f'vendor/animCJK/graphics{sys.argv[1]}.txt')
++output_dir = os.path.join(root, sys.argv[2])
+ 
+ positioners = {
+     '⿰': 2,
+@@ -26,11 +27,16 @@ missing_marker = '？'
+ graphics_data = {}
+ dict_data = {}
+ 
+-with open(dictionary_file) as f:
+-    lines = f.readlines()
+-    for line in lines:
+-        decoded_line = json.loads(line)
+-        dict_data[decoded_line['character']] = decoded_line
++bUsesDict = True
++if sys.argv[3] == '0':
++    bUsesDict = False
++
++if bUsesDict:
++    with open(dictionary_file) as f:
++        lines = f.readlines()
++        for line in lines:
++            decoded_line = json.loads(line)
++            dict_data[decoded_line['character']] = decoded_line
+ 
+ with open(graphics_file) as f:
+     lines = f.readlines()
+@@ -44,6 +50,8 @@ with open(graphics_file) as f:
+ def get_decomp_index(char, subchar):
+     "Parse the decomposition tree to figure out what the index of the subchar is within the char"
+     stack = []
++    if not bUsesDict:
++        return None
+     for piece in dict_data[char]['decomposition']:
+         last_node = None
+         path = []
