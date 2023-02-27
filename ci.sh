@@ -8,7 +8,9 @@ merge_data()
 		tmp="${file:$n}"
 		tmp="${tmp%.json}"
 		if [ -n "$(ls -A ../../data/"${tmp}".json 2>/dev/null)" ] && [ "$2" != "0" ]; then
-			cp "$1"/"${tmp}".json ../../data/"${tmp}"-"$2".json || exit
+			if ![ -n "$(ls -A ../../data/"${tmp}"-"$2".json 2>/dev/null)" ]; then
+				cp "$1"/"${tmp}".json ../../data/"${tmp}"-"$2".json || exit
+			fi
 		else
 			cp "$1"/"${tmp}".json ../../data/ || exit
 		fi
