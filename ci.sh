@@ -7,12 +7,12 @@ merge_data()
 		n="${#1}"
 		tmp="${file:$n}"
 		tmp="${tmp%.json}"
-		if [ -n "$(ls -A ../../data/"${tmp}".json 2>/dev/null)" ] && [ "$2" != "0" ]; then
-			if [ ! -n "$(ls -A ../../data/"${tmp}"-"$2".json 2>/dev/null)" ]; then
-				cp "$1"/"${tmp}".json ../../data/"${tmp}"-"$2".json || exit
+		if [ -n "$(ls -A ../hanzi-writer-data-zh/data/"${tmp}".json 2>/dev/null)" ] && [ "$2" != "0" ]; then
+			if [ ! -n "$(ls -A ../hanzi-writer-data-zh/data/"${tmp}"-"$2".json 2>/dev/null)" ]; then
+				cp "$1"/"${tmp}".json ../hanzi-writer-data-zh/data/"${tmp}"-"$2".json || exit
 			fi
 		else
-			cp "$1"/"${tmp}".json ../../data/ || exit
+			cp "$1"/"${tmp}".json ../hanzi-writer-data-zh/data/ || exit
 		fi
 	done
 }
@@ -40,6 +40,9 @@ init()
 	merge_data data-hz/ 0
 	merge_data data-hz-t/ 0
 	merge_data data-kana/ 0
+
+	cd ../hanzi-writer-data-hz/ || exit
+	cp data/*.json ../../data/ || exit
 }
 
 init
