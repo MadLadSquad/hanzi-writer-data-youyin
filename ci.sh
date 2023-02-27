@@ -37,7 +37,7 @@ init()
 	merge_data data-ko/ ko
 	merge_data data-hz/ 0
 	merge_data data-hz-t/ 0
-	merge_data data-kana/ kana
+	merge_data data-kana/ 0
 }
 
 init
