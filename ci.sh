@@ -32,13 +32,9 @@ init()
 	python3 stroke_data_parser.py Kana data-kana 0 || exit
 	python3 stroke_data_parser.py Ja data 1 || exit
 	python3 stroke_data_parser.py Ko data-ko 1 || exit
-	python3 stroke_data_parser.py ZhHans data-hz 1 || exit
-	python3 stroke_data_parser.py ZhHant data-hz-t 1 || exit
 
 	merge_data data/ jp
 	merge_data data-ko/ ko
-	merge_data data-hz/ 0
-	merge_data data-hz-t/ 0
 	merge_data data-kana/ 0
 
 	cd ../hanzi-writer-data-zh/ || exit
