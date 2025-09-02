@@ -29,7 +29,7 @@ init()
 	patch stroke_data_parser.py ../../stroke-parser.patch || exit
 
 	mkdir data-ko data-kana data-hz data-hz-t || exit
-	python3 stroke_data_parser.py Kana data-kana 0 || exit
+	python3 stroke_data_parser.py JaKana data-kana 0 || exit
 	python3 stroke_data_parser.py Ja data 1 || exit
 	python3 stroke_data_parser.py Ko data-ko 1 || exit
 
