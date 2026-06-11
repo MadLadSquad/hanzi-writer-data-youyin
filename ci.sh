@@ -39,6 +39,9 @@ init()
 
 	cd ../hanzi-writer-data-zh/ || exit
 	cp data/*.json ../../data/ || exit
+
+	cd ../../ || exit
+	python3 generate_character_map.py || exit
 }
 
 init
