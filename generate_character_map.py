@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import json
+import shutil
 
 def main():
     data_dir = "data"
@@ -31,10 +32,59 @@ def main():
             "content": content
         })
 
-    # Save the resulting array to character-map-full.json in minified format
-    output_full_filename = "character-map-full.json"
-    with open(output_full_filename, "w", encoding="utf-8") as f:
-        json.dump(full_data, f, ensure_ascii=False, separators=(",", ":"))
+    # Remove the old character-map-full.json file if it exists
+    old_full_filename = "character-map-full.json"
+    if os.path.exists(old_full_filename):
+        try:
+            os.remove(old_full_filename)
+        except Exception as e:
+            print(f"Warning: Could not remove {old_full_filename}: {e}")
+
+    # Prepare chunks directory
+    chunks_dir = "character-map-chunks"
+    if os.path.exists(chunks_dir):
+        try:
+            shutil.rmtree(chunks_dir)
+        except Exception as e:
+            print(f"Warning: Could not remove existing directory {chunks_dir}: {e}")
+    os.makedirs(chunks_dir, exist_ok=True)
+
+    # Partition full_data into chunks of around 1MB in size (1,000,000 bytes)
+    # We serialize elements using minified JSON (separators=(',', ':')) to compute size.
+    chunks = []
+    current_chunk = []
+    current_chunk_size = 2  # '[]'
+    
+    for item in full_data:
+        item_str = json.dumps(item, ensure_ascii=False, separators=(",", ":"))
+        item_bytes = item_str.encode("utf-8")
+        item_size = len(item_bytes)
+        
+        # calculate size if we add this item
+        added_size = item_size + (1 if current_chunk else 0)
+        
+        # If adding this item would make the chunk exceed 1,000,000 bytes, start a new chunk.
+        if current_chunk and current_chunk_size + added_size > 1000000:
+            chunks.append(current_chunk)
+            current_chunk = [item]
+            current_chunk_size = 2 + item_size
+        else:
+            current_chunk.append(item)
+            current_chunk_size += added_size
+
+    if current_chunk:
+        chunks.append(current_chunk)
+
+    # Write each chunk to its file in the character-map-chunks directory
+    for i, chunk in enumerate(chunks, 1):
+        chunk_filename = os.path.join(chunks_dir, f"character-map-full-{i}.json")
+        with open(chunk_filename, "w", encoding="utf-8") as f:
+            json.dump(chunk, f, ensure_ascii=False, separators=(",", ":"))
+
+    # Save the total number of chunks to character-map-chunks.json as a raw JSON number
+    chunks_count_filename = "character-map-chunks.json"
+    with open(chunks_count_filename, "w", encoding="utf-8") as f:
+        json.dump(len(chunks), f)
 
 if __name__ == "__main__":
     main()
