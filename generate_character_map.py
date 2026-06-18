@@ -2,6 +2,7 @@
 import os
 import json
 import shutil
+import hashlib
 
 def main():
     data_dir = "data"
@@ -76,15 +77,22 @@ def main():
         chunks.append(current_chunk)
 
     # Write each chunk to its file in the character-map-chunks directory
-    for i, chunk in enumerate(chunks, 1):
+    hashes = []
+    for i, chunk in enumerate(chunks):
         chunk_filename = os.path.join(chunks_dir, f"character-map-full-{i}.json")
+        chunk_content = json.dumps(chunk, ensure_ascii=False, separators=(",", ":"))
+        
+        # Calculate SHA-256 hash of the chunk file contents
+        chunk_hash = hashlib.sha256(chunk_content.encode("utf-8")).hexdigest()
+        hashes.append(chunk_hash)
+        
         with open(chunk_filename, "w", encoding="utf-8") as f:
-            json.dump(chunk, f, ensure_ascii=False, separators=(",", ":"))
+            f.write(chunk_content)
 
-    # Save the total number of chunks to character-map-chunks.json as a raw JSON number
+    # Save the total number of chunks and their hashes to character-map-chunks.json
     chunks_count_filename = "character-map-chunks.json"
     with open(chunks_count_filename, "w", encoding="utf-8") as f:
-        json.dump(len(chunks), f)
+        json.dump({"num": len(chunks), "version": hashes}, f, ensure_ascii=False)
 
 if __name__ == "__main__":
     main()
