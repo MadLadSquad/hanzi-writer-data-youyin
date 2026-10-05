@@ -67,7 +67,6 @@ jobs:
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           R2_BUCKET: "youyin-data"
         run: |
-          dnf install -y awscli2
           aws s3 sync . "s3://${R2_BUCKET}" \
             --endpoint-url "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" \
             --delete \
