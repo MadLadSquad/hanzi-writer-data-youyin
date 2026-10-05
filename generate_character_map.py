@@ -41,6 +41,11 @@ def main():
         except Exception as e:
             print(f"Warning: Could not remove {old_full_filename}: {e}")
 
+    # Save every character to a single file. It is too large for git, so it is ignored and only uploaded to R2
+    all_filename = "character-map-all.json"
+    with open(all_filename, "w", encoding="utf-8") as f:
+        json.dump(full_data, f, ensure_ascii=False, separators=(",", ":"))
+
     # Prepare chunks directory
     chunks_dir = "character-map-chunks"
     if os.path.exists(chunks_dir):

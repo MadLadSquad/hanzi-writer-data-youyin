@@ -56,3 +56,27 @@ jobs:
           filename: .github/auto-issue-template.md
           update_existing: true
           search_existing: open
+      - name: Upload to Cloudflare R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.PACKAGE_R2_ACCESS_KEY_ID || vars.PACKAGE_R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.PACKAGE_R2_SECRET_ACCESS_KEY }}
+          AWS_ENDPOINT_URL_S3: https://${{ secrets.R2_ACCOUNT_ID || vars.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          AWS_DEFAULT_REGION: auto
+          # Newer AWS CLI versions send checksum headers by default that R2 does not fully support
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+        # The AWS CLI is preinstalled on GitHub's Ubuntu runners.
+        # A dry run is done first so that the sync aborts if it would delete too many files, guarding against wiping
+        # the bucket if the generated data is ever unexpectedly empty.
+        run: |
+          aws configure set default.s3.max_concurrent_requests 32
+          SYNC_ARGS=(. s3://youyin-data --delete --exclude ".git/*" --exclude "ThirdParty/*" --no-progress)
+
+          deletes=$(aws s3 sync "${SYNC_ARGS[@]}" --dryrun | grep -c '^(dryrun) delete:' || true)
+          echo "Files to delete: ${deletes}"
+          if [ "${deletes}" -gt 1000 ]; then
+            echo "::error::Refusing to sync, ${deletes} files would be deleted from R2 (limit is 1000)"
+            exit 1
+          fi
+
+          aws s3 sync "${SYNC_ARGS[@]}" --only-show-errors
