@@ -67,10 +67,20 @@ jobs:
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           R2_BUCKET: "youyin-data"
         run: |
+          ENDPOINT="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
+
+          # Upload everything else without deleting anything already in the bucket
           aws s3 sync . "s3://${R2_BUCKET}" \
-            --endpoint-url "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" \
-            --delete \
+            --endpoint-url "$ENDPOINT" \
             --exclude ".git/*" \
             --exclude ".github/*" \
             --exclude "ThirdParty/*" \
-            --exclude "my_key"
+            --exclude "data/*" \
+            --exclude "character-map-chunks/*"
+
+          # Only these directories get stale files removed from the bucket
+          for dir in data character-map-chunks; do
+            aws s3 sync "$dir" "s3://${R2_BUCKET}/$dir" \
+              --endpoint-url "$ENDPOINT" \
+              --delete
+          done
