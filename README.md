@@ -33,12 +33,12 @@ Script support:
 - [X] Korean Hanja
 - [X] Katakana
 - [X] Hiragana
-- [ ] Latin
-- [ ] Cyrillic
+- [x] Latin
+- [x] Cyrillic
 - [ ] Armenian
 - [ ] Georgian
 - [ ] Runic
-- [ ] Greek
+- [x] Greek
 - [ ] Arabic
 - [ ] Zhuyin/BoPoMoFo
 - [ ] Hebrew
